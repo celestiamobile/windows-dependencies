@@ -14,11 +14,10 @@ pool:
 steps:
 - checkout: vcpkg
   path: vcpkg
+  fetchDepth: 0
 
 - script: |
-    dir
-    ls
-    git reset --hard origin/celestia
+    git checkout origin/celestia
   displayName: 'Checkout Branch'
   workingDirectory: $(Agent.BuildDirectory)/vcpkg
 
