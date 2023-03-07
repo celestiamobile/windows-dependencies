@@ -13,6 +13,7 @@ pool:
 
 steps:
 - checkout: vcpkg
+  path: vcpkg
 
 - script: |
     cd vcpkg
