@@ -22,7 +22,7 @@ steps:
   inputs:
     packageType: 'nuget'
     feed: '9f9dcde1-dcba-4537-8214-71c8a03b99a0/018c4587-05c3-4ee5-885e-27362b084c67'
-    view: 
+    extract: false 
     definition: 'b1cdeeaf-bdb3-4129-b24e-c50396d00423'
     version: '1.0.0'
     downloadPath: '$(Agent.BuildDirectory)/vcpkg'
@@ -49,6 +49,7 @@ steps:
   workingDirectory: $(Agent.BuildDirectory)/vcpkg
 
 - task: NuGetCommand@2
+  displayName: 'Publish'
   inputs:
     command: 'push'
     packagesToPush: '$(Agent.BuildDirectory)/vcpkg/celestia-uwp-dependencies.$(VERSION).nupkg'
