@@ -30,6 +30,6 @@ steps:
   workingDirectory: $(Agent.BuildDirectory)/vcpkg
 
 - script: |
-    .\vcpkg install libpng:x64-uwp
+    .\vcpkg --triplet=x64-uwp install --recurse libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype cspice libzip[core]
   displayName: 'Build'
   workingDirectory: $(Agent.BuildDirectory)/vcpkg
