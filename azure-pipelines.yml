@@ -16,9 +16,9 @@ steps:
   path: vcpkg
 
 - script: |
-    cd ../vcpkg
     git checkout origin/celestia
   displayName: 'Checkout Branch'
+  workingDirectory: $(Agent.BuildDirectory)/vcpkg
 
 - task: NuGetToolInstaller@1
   displayName: 'Install Nuget'
