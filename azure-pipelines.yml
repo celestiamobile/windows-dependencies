@@ -18,9 +18,6 @@ steps:
   displayName: 'Checkout Branch'
   workingDirectory: $(Agent.BuildDirectory)/vcpkg
 
-- task: NuGetToolInstaller@1
-  displayName: 'Install Nuget'
-
 - script: |
     .\bootstrap-vcpkg.bat
   displayName: 'Bootstrap'
@@ -32,6 +29,13 @@ steps:
   workingDirectory: $(Agent.BuildDirectory)/vcpkg
 
 - script: |
-    .\vcpkg export --triplet=x64-uwp --nuget --nuget-version=$(VERSION) --nuget-id=celestia-uwp-dependencies libzip
+    .\vcpkg export --triplet=x64-uwp --nuget --nuget-version= --nuget-id=celestia-uwp-dependencies libzip
   displayName: 'Export'
   workingDirectory: $(Agent.BuildDirectory)/vcpkg
+
+- task: NuGetCommand@2
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Agent.BuildDirectory)/vcpkg/celestia-uwp-dependencies.$(VERSION).nupkg'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: '9f9dcde1-dcba-4537-8214-71c8a03b99a0/018c4587-05c3-4ee5-885e-27362b084c67'
