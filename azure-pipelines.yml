@@ -16,6 +16,8 @@ steps:
   path: vcpkg
 
 - script: |
+    dir
+    ls
     git checkout origin/celestia
   displayName: 'Checkout Branch'
   workingDirectory: $(Agent.BuildDirectory)/vcpkg
