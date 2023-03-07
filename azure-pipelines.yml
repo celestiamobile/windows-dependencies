@@ -1,0 +1,23 @@
+resources:
+ repositories:
+  - repository: vcpkg
+    type: github
+    endpoint: GithubAuth
+    name: levinli303/vcpkg
+
+trigger:
+- main
+
+pool:
+  vmImage: windows-2022
+
+steps:
+- checkout: vcpkg
+
+- script: |
+    cd vcpkg
+    git checkout origin/celestia
+  displayName: 'Checkout Branch'
+
+- task: NuGetToolInstaller@1
+  displayName: 'Install Nuget'
