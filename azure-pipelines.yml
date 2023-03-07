@@ -8,35 +8,39 @@ resources:
 pool:
   vmImage: windows-2022
 
-steps:
-- checkout: vcpkg
-  path: vcpkg
-  fetchDepth: 0
+jobs:
+- job: "Main"
+  timeoutInMinutes: 120
 
-- script: |
-    git checkout origin/celestia
-  displayName: 'Checkout Branch'
-  workingDirectory: $(Agent.BuildDirectory)/vcpkg
+  steps:
+  - checkout: vcpkg
+    path: vcpkg
+    fetchDepth: 0
 
-- script: |
-    .\bootstrap-vcpkg.bat
-  displayName: 'Bootstrap'
-  workingDirectory: $(Agent.BuildDirectory)/vcpkg
+  - script: |
+      git checkout origin/celestia
+    displayName: 'Checkout Branch'
+    workingDirectory: $(Agent.BuildDirectory)/vcpkg
 
-- script: |
-    .\vcpkg --triplet=x64-uwp install --recurse libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype[core] cspice libzip[core]
-  displayName: 'Build'
-  workingDirectory: $(Agent.BuildDirectory)/vcpkg
+  - script: |
+      .\bootstrap-vcpkg.bat
+    displayName: 'Bootstrap'
+    workingDirectory: $(Agent.BuildDirectory)/vcpkg
 
-- script: |
-    .\vcpkg export --triplet=x64-uwp --nuget --nuget-version=$(VERSION) --nuget-id=celestia-uwp-dependencies libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype cspice libzip
-  displayName: 'Export'
-  workingDirectory: $(Agent.BuildDirectory)/vcpkg
+  - script: |
+      .\vcpkg --triplet=x64-uwp install --recurse libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype[core] cspice libzip[core]
+    displayName: 'Build'
+    workingDirectory: $(Agent.BuildDirectory)/vcpkg
 
-- task: NuGetCommand@2
-  displayName: 'Publish'
-  inputs:
-    command: 'push'
-    packagesToPush: '$(Agent.BuildDirectory)/vcpkg/celestia-uwp-dependencies.$(VERSION).nupkg'
-    nuGetFeedType: 'internal'
-    publishVstsFeed: '9f9dcde1-dcba-4537-8214-71c8a03b99a0/018c4587-05c3-4ee5-885e-27362b084c67'
+  - script: |
+      .\vcpkg export --triplet=x64-uwp --nuget --nuget-version=$(VERSION) --nuget-id=celestia-uwp-dependencies libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype cspice libzip
+    displayName: 'Export'
+    workingDirectory: $(Agent.BuildDirectory)/vcpkg
+
+  - task: NuGetCommand@2
+    displayName: 'Publish'
+    inputs:
+      command: 'push'
+      packagesToPush: '$(Agent.BuildDirectory)/vcpkg/celestia-uwp-dependencies.$(VERSION).nupkg'
+      nuGetFeedType: 'internal'
+      publishVstsFeed: '9f9dcde1-dcba-4537-8214-71c8a03b99a0/018c4587-05c3-4ee5-885e-27362b084c67'
