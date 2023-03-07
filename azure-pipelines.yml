@@ -29,7 +29,7 @@ steps:
   workingDirectory: $(Agent.BuildDirectory)/vcpkg
 
 - script: |
-    .\vcpkg export --triplet=x64-uwp --nuget --nuget-version=${VERSION} --nuget-id=celestia-uwp-dependencies libzip
+    .\vcpkg export --triplet=x64-uwp --nuget --nuget-version=$(VERSION) --nuget-id=celestia-uwp-dependencies libzip
   displayName: 'Export'
   workingDirectory: $(Agent.BuildDirectory)/vcpkg
 
