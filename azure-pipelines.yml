@@ -23,3 +23,13 @@ steps:
 
 - task: NuGetToolInstaller@1
   displayName: 'Install Nuget'
+
+- script: |
+    .\bootstrap-vcpkg.bat
+  displayName: 'Bootstrap'
+  workingDirectory: $(Agent.BuildDirectory)/vcpkg
+
+- script: |
+    .\vcpkg install libpng:x64-uwp
+  displayName: 'Build'
+  workingDirectory: $(Agent.BuildDirectory)/vcpkg
