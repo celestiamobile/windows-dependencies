@@ -16,7 +16,7 @@ steps:
   path: vcpkg
 
 - script: |
-    cd vcpkg
+    cd ../vcpkg
     git checkout origin/celestia
   displayName: 'Checkout Branch'
 
