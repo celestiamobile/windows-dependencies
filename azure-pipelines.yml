@@ -28,12 +28,12 @@ jobs:
     workingDirectory: $(Agent.BuildDirectory)/vcpkg
 
   - script: |
-      .\vcpkg --triplet=x64-uwp install --recurse libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype[core] cspice libzip[core]
+      .\vcpkg --triplet=x64-uwp install --recurse libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype[core] cspice libzip[core] icu[core]
     displayName: 'Build'
     workingDirectory: $(Agent.BuildDirectory)/vcpkg
 
   - script: |
-      .\vcpkg export --triplet=x64-uwp --nuget --nuget-version=$(VERSION) --nuget-id=celestia-uwp-dependencies libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype cspice libzip
+      .\vcpkg export --triplet=x64-uwp --nuget --nuget-version=$(VERSION) --nuget-id=celestia-uwp-dependencies libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype cspice libzip icu
     displayName: 'Export'
     workingDirectory: $(Agent.BuildDirectory)/vcpkg
 
