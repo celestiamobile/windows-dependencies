@@ -3,7 +3,7 @@ resources:
   - repository: vcpkg
     type: github
     endpoint: GithubAuth
-    name: levinli303/vcpkg
+    name: celestiamobile/vcpkg
 
 pool:
   vmImage: windows-2022
