@@ -43,4 +43,4 @@ jobs:
       command: 'push'
       packagesToPush: '$(Agent.BuildDirectory)/vcpkg/celestia-uwp-dependencies.$(VERSION).nupkg'
       nuGetFeedType: 'internal'
-      publishVstsFeed: '9f9dcde1-dcba-4537-8214-71c8a03b99a0/018c4587-05c3-4ee5-885e-27362b084c67'
+      publishVstsFeed: '9f9dcde1-dcba-4537-8214-71c8a03b99a0/14bb1031-e6b2-40ac-b287-73e7fcb5900e'
