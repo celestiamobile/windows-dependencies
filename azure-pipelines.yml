@@ -5,42 +5,18 @@ resources:
     endpoint: GithubAuth
     name: celestiamobile/vcpkg
 
-pool:
-  vmImage: windows-2022
+stages:
+- stage: Windows
+  displayName: 'Windows'
+  jobs:
+  - template: jobs/build.yml
+    parameters:
+      buildTarget: windows
 
-jobs:
-- job: "Main"
-  timeoutInMinutes: 120
-
-  steps:
-  - checkout: vcpkg
-    path: vcpkg
-    fetchDepth: 0
-
-  - script: |
-      git checkout origin/celestia
-    displayName: 'Checkout Branch'
-    workingDirectory: $(Agent.BuildDirectory)/vcpkg
-
-  - script: |
-      .\bootstrap-vcpkg.bat
-    displayName: 'Bootstrap'
-    workingDirectory: $(Agent.BuildDirectory)/vcpkg
-
-  - script: |
-      .\vcpkg --triplet=x64-uwp install --recurse libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype[core] cspice libzip[core]
-    displayName: 'Build'
-    workingDirectory: $(Agent.BuildDirectory)/vcpkg
-
-  - script: |
-      .\vcpkg export --triplet=x64-uwp --nuget --nuget-version=$(VERSION) --nuget-id=celestia-uwp-dependencies libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype cspice libzip
-    displayName: 'Export'
-    workingDirectory: $(Agent.BuildDirectory)/vcpkg
-
-  - task: NuGetCommand@2
-    displayName: 'Publish'
-    inputs:
-      command: 'push'
-      packagesToPush: '$(Agent.BuildDirectory)/vcpkg/celestia-uwp-dependencies.$(VERSION).nupkg'
-      nuGetFeedType: 'internal'
-      publishVstsFeed: '9f9dcde1-dcba-4537-8214-71c8a03b99a0/14bb1031-e6b2-40ac-b287-73e7fcb5900e'
+- stage: UWP
+  displayName: 'UWP'
+  dependsOn: []
+  jobs:
+  - template: jobs/build.yml
+    parameters:
+      buildTarget: uwp

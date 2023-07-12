@@ -1,0 +1,49 @@
+jobs:
+- job: "Main"
+  timeoutInMinutes: 120
+  pool:
+    vmImage: windows-2022
+
+  variables:
+    buildTarget: ${{ parameters.buildTarget }}
+
+  steps:
+  - checkout: vcpkg
+    path: vcpkg
+    fetchDepth: 0
+
+  - script: |
+      git checkout origin/celestia
+    displayName: 'Checkout Branch'
+    workingDirectory: $(Agent.BuildDirectory)/vcpkg
+
+  - script: |
+      git config --global user.email "name@name.com"
+      git config --global user.name "Name Name"
+      git cherry-pick origin/angle-winui
+    displayName: 'Cherry-Pick ANGLE for WinUI Commit'
+    workingDirectory: $(Agent.BuildDirectory)/vcpkg
+    condition: eq( variables['buildTarget'], 'windows' )
+
+  - script: |
+      .\bootstrap-vcpkg.bat
+    displayName: 'Bootstrap'
+    workingDirectory: $(Agent.BuildDirectory)/vcpkg
+
+  - script: |
+      .\vcpkg --triplet=x64-$(buildTarget) install --recurse libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype[core] cspice libzip[core]
+    displayName: 'Build'
+    workingDirectory: $(Agent.BuildDirectory)/vcpkg
+
+  - script: |
+      .\vcpkg export --triplet=x64-$(buildTarget) --nuget --nuget-version=$(VERSION) --nuget-id=celestia-$(buildTarget)-dependencies libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype cspice libzip
+    displayName: 'Export'
+    workingDirectory: $(Agent.BuildDirectory)/vcpkg
+
+  - task: NuGetCommand@2
+    displayName: 'Publish'
+    inputs:
+      command: 'push'
+      packagesToPush: '$(Agent.BuildDirectory)/vcpkg/celestia-$(buildTarget)-dependencies.$(VERSION).nupkg'
+      nuGetFeedType: 'internal'
+      publishVstsFeed: '9f9dcde1-dcba-4537-8214-71c8a03b99a0/14bb1031-e6b2-40ac-b287-73e7fcb5900e'
