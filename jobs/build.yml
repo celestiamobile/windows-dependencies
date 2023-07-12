@@ -43,7 +43,7 @@ jobs:
   - task: PublishBuildArtifacts@1
     inputs:
       PathtoPublish: '$(Agent.BuildDirectory)/vcpkg/celestia-$(buildTarget)-dependencies.$(VERSION).nupkg'
-      ArtifactName: 'celestia-$(buildTarget)-dependencies.$(VERSION).nupkg'
+      ArtifactName: '$(buildTarget)'
       publishLocation: 'Container'
     displayName: 'Publish Artifacts'
 
