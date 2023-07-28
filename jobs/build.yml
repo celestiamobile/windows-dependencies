@@ -31,12 +31,12 @@ jobs:
     workingDirectory: $(Agent.BuildDirectory)/vcpkg
 
   - script: |
-      .\vcpkg --triplet=x64-$(buildTarget) install --recurse libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype[core] cspice libzip[core]
+      .\vcpkg --triplet=x64-$(buildTarget) install --recurse libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype[core] cspice libzip[core] meshoptimizer
     displayName: 'Build'
     workingDirectory: $(Agent.BuildDirectory)/vcpkg
 
   - script: |
-      .\vcpkg export --triplet=x64-$(buildTarget) --nuget --nuget-version=$(VERSION) --nuget-id=celestia-$(buildTarget)-dependencies libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype cspice libzip
+      .\vcpkg export --triplet=x64-$(buildTarget) --nuget --nuget-version=$(VERSION) --nuget-id=celestia-$(buildTarget)-dependencies libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype cspice libzip  meshoptimizer
     displayName: 'Export'
     workingDirectory: $(Agent.BuildDirectory)/vcpkg
 
