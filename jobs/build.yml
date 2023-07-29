@@ -39,6 +39,7 @@ jobs:
       .\vcpkg export --triplet=x64-$(buildTarget) --nuget --nuget-version=$(VERSION) --nuget-id=celestia-$(buildTarget)-dependencies libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype cspice libzip  meshoptimizer
     displayName: 'Export'
     workingDirectory: $(Agent.BuildDirectory)/vcpkg
+    condition: ne( variables['VERSION'], '' )
 
   - task: PublishBuildArtifacts@1
     inputs:
