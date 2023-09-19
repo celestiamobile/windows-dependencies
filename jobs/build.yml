@@ -47,6 +47,7 @@ jobs:
       ArtifactName: '$(buildTarget)'
       publishLocation: 'Container'
     displayName: 'Publish Artifacts'
+    condition: and(eq( variables['buildTarget'], 'uwp' ), ne( variables['VERSION'], '' ))
 
   - task: NuGetCommand@2
     displayName: 'Publish Package'
