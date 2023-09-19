@@ -47,7 +47,6 @@ jobs:
       ArtifactName: '$(buildTarget)'
       publishLocation: 'Container'
     displayName: 'Publish Artifacts'
-    condition: ne( variables['VERSION'], '' )
 
   - task: NuGetCommand@2
     displayName: 'Publish Package'
