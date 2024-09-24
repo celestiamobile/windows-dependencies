@@ -11,7 +11,7 @@ stages:
   jobs:
   - template: jobs/build.yml
     parameters:
-      buildTarget: windows
+      buildTarget: windows-release
 
 - stage: UWP
   displayName: 'UWP'

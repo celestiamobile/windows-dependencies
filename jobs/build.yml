@@ -23,7 +23,7 @@ jobs:
       git cherry-pick origin/angle-winui
     displayName: 'Cherry-Pick ANGLE for WinUI Commit'
     workingDirectory: $(Agent.BuildDirectory)/vcpkg
-    condition: eq( variables['buildTarget'], 'windows' )
+    condition: eq( variables['buildTarget'], 'windows-release' )
 
   - script: |
       .\bootstrap-vcpkg.bat
@@ -32,14 +32,27 @@ jobs:
 
   - script: |
       .\vcpkg --triplet=x64-$(buildTarget) install --recurse libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype[core] cspice libzip[core] meshoptimizer miniaudio boost-container boost-smart-ptr
-    displayName: 'Build'
+    displayName: 'Build (UWP)'
     workingDirectory: $(Agent.BuildDirectory)/vcpkg
+    condition: eq( variables['buildTarget'], 'uwp' )
+
+  - script: |
+      .\vcpkg --triplet=x64-$(buildTarget) install --recurse libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype[core] cspice libzip[core] meshoptimizer miniaudio boost-container boost-smart-ptr sentry-native
+    displayName: 'Build (Windows)'
+    workingDirectory: $(Agent.BuildDirectory)/vcpkg
+    condition: eq( variables['buildTarget'], 'windows-release' )
 
   - script: |
       .\vcpkg export --triplet=x64-$(buildTarget) --nuget --nuget-version=$(VERSION) --nuget-id=celestia-$(buildTarget)-dependencies libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype cspice libzip  meshoptimizer miniaudio boost-container boost-smart-ptr
-    displayName: 'Export'
+    displayName: 'Export (UWP)'
     workingDirectory: $(Agent.BuildDirectory)/vcpkg
-    condition: ne( variables['VERSION'], '' )
+    condition: and(eq( variables['buildTarget'], 'uwp' ), ne( variables['VERSION'], '' ))
+
+  - script: |
+      .\vcpkg export --triplet=x64-$(buildTarget) --nuget --nuget-version=$(VERSION) --nuget-id=celestia-$(buildTarget)-dependencies libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype cspice libzip  meshoptimizer miniaudio boost-container boost-smart-ptr sentry-native
+    displayName: 'Export (Windows)'
+    workingDirectory: $(Agent.BuildDirectory)/vcpkg
+    condition: and(eq( variables['buildTarget'], 'windows-release' ), ne( variables['VERSION'], '' ))
 
   - task: PublishBuildArtifacts@1
     inputs:
@@ -47,7 +60,7 @@ jobs:
       ArtifactName: '$(buildTarget)'
       publishLocation: 'Container'
     displayName: 'Publish Artifacts'
-    condition: and(eq( variables['buildTarget'], 'uwp' ), ne( variables['VERSION'], '' ))
+    condition: and(eq( variables['buildTarget'], 'windows-release' ), ne( variables['VERSION'], '' ))
 
   - task: NuGetCommand@2
     displayName: 'Publish Package'
@@ -56,4 +69,4 @@ jobs:
       packagesToPush: '$(Agent.BuildDirectory)/vcpkg/celestia-$(buildTarget)-dependencies.$(VERSION).nupkg'
       nuGetFeedType: 'internal'
       publishVstsFeed: '9f9dcde1-dcba-4537-8214-71c8a03b99a0/14bb1031-e6b2-40ac-b287-73e7fcb5900e'
-    condition: and(eq( variables['buildTarget'], 'uwp' ), ne( variables['VERSION'], '' ))
+    condition: and(eq( variables['buildTarget'], 'windows-release' ), ne( variables['VERSION'], '' ))
