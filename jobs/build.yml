@@ -37,7 +37,7 @@ jobs:
     condition: eq( variables['buildTarget'], 'uwp' )
 
   - script: |
-      .\vcpkg --triplet=x64-$(buildTarget) install --recurse libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype[core] cspice libzip[core] meshoptimizer miniaudio boost-container boost-smart-ptr sentry-native
+      .\vcpkg --triplet=x64-$(buildTarget) install --recurse libpng libjpeg-turbo gettext luajit fmt angle eigen3 freetype[core] cspice libzip[core] meshoptimizer miniaudio boost-container boost-smart-ptr sentry-native
     displayName: 'Build (Windows)'
     workingDirectory: $(Agent.BuildDirectory)/vcpkg
     condition: eq( variables['buildTarget'], 'windows-release' )
@@ -49,7 +49,7 @@ jobs:
     condition: and(eq( variables['buildTarget'], 'uwp' ), ne( variables['VERSION'], '' ))
 
   - script: |
-      .\vcpkg export --triplet=x64-$(buildTarget) --nuget --nuget-version=$(VERSION) --nuget-id=celestia-$(buildTarget)-dependencies libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype cspice libzip  meshoptimizer miniaudio boost-container boost-smart-ptr sentry-native
+      .\vcpkg export --triplet=x64-$(buildTarget) --nuget --nuget-version=$(VERSION) --nuget-id=celestia-$(buildTarget)-dependencies libpng libjpeg-turbo gettext luajit fmt angle eigen3 freetype cspice libzip  meshoptimizer miniaudio boost-container boost-smart-ptr sentry-native
     displayName: 'Export (Windows)'
     workingDirectory: $(Agent.BuildDirectory)/vcpkg
     condition: and(eq( variables['buildTarget'], 'windows-release' ), ne( variables['VERSION'], '' ))
