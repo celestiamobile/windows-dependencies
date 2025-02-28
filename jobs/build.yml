@@ -2,7 +2,7 @@ jobs:
 - job: "Main"
   timeoutInMinutes: 120
   pool:
-    vmImage: windows-2022
+    vmImage: windows-2025
 
   variables:
     buildTarget: ${{ parameters.buildTarget }}
