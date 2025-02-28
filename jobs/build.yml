@@ -31,12 +31,14 @@ jobs:
     workingDirectory: $(Agent.BuildDirectory)/vcpkg
 
   - script: |
+      set VCPKG_BINARY_SOURCES=clear
       .\vcpkg --triplet=x64-$(buildTarget) install --recurse libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype[core] cspice libzip[core] meshoptimizer miniaudio boost-container boost-smart-ptr
     displayName: 'Build (UWP)'
     workingDirectory: $(Agent.BuildDirectory)/vcpkg
     condition: eq( variables['buildTarget'], 'uwp' )
 
   - script: |
+      set VCPKG_BINARY_SOURCES=clear
       .\vcpkg --triplet=x64-$(buildTarget) install --recurse libpng libjpeg-turbo gettext luajit fmt angle eigen3 freetype[core] cspice libzip[core] meshoptimizer miniaudio boost-container boost-smart-ptr sentry-native
     displayName: 'Build (Windows)'
     workingDirectory: $(Agent.BuildDirectory)/vcpkg
