@@ -18,40 +18,32 @@ jobs:
     workingDirectory: $(Agent.BuildDirectory)/vcpkg
 
   - script: |
-      git config --global user.email "name@name.com"
-      git config --global user.name "Name Name"
-      git cherry-pick origin/angle-winui
-    displayName: 'Cherry-Pick ANGLE for WinUI Commit'
-    workingDirectory: $(Agent.BuildDirectory)/vcpkg
-    condition: eq( variables['buildTarget'], 'windows-release' )
-
-  - script: |
       .\bootstrap-vcpkg.bat
     displayName: 'Bootstrap'
     workingDirectory: $(Agent.BuildDirectory)/vcpkg
 
   - script: |
       set VCPKG_BINARY_SOURCES=clear
-      .\vcpkg --triplet=x64-$(buildTarget) install --recurse libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype[core] cspice libzip[core] meshoptimizer miniaudio boost-container boost-smart-ptr
+      .\vcpkg --triplet=x64-$(buildTarget) install --recurse libpng libjpeg-turbo gettext lua fmt eigen3 freetype[core] cspice libzip[core] meshoptimizer miniaudio boost-container boost-smart-ptr
     displayName: 'Build (UWP)'
     workingDirectory: $(Agent.BuildDirectory)/vcpkg
     condition: eq( variables['buildTarget'], 'uwp' )
 
   - script: |
       set VCPKG_BINARY_SOURCES=clear
-      .\vcpkg --triplet=x64-$(buildTarget) install --recurse libpng libjpeg-turbo gettext luajit fmt angle eigen3 freetype[core] cspice libzip[core] meshoptimizer miniaudio boost-container boost-smart-ptr sentry-native
+      .\vcpkg --triplet=x64-$(buildTarget) install --recurse libpng libjpeg-turbo gettext luajit fmt eigen3 freetype[core] cspice libzip[core] meshoptimizer miniaudio boost-container boost-smart-ptr sentry-native
     displayName: 'Build (Windows)'
     workingDirectory: $(Agent.BuildDirectory)/vcpkg
     condition: eq( variables['buildTarget'], 'windows-release' )
 
   - script: |
-      .\vcpkg export --triplet=x64-$(buildTarget) --nuget --nuget-version=$(VERSION) --nuget-id=celestia-$(buildTarget)-dependencies libpng libjpeg-turbo gettext lua fmt angle eigen3 freetype cspice libzip  meshoptimizer miniaudio boost-container boost-smart-ptr
+      .\vcpkg export --triplet=x64-$(buildTarget) --nuget --nuget-version=$(VERSION) --nuget-id=celestia-$(buildTarget)-dependencies libpng libjpeg-turbo gettext lua fmt eigen3 freetype cspice libzip  meshoptimizer miniaudio boost-container boost-smart-ptr
     displayName: 'Export (UWP)'
     workingDirectory: $(Agent.BuildDirectory)/vcpkg
     condition: and(eq( variables['buildTarget'], 'uwp' ), ne( variables['VERSION'], '' ))
 
   - script: |
-      .\vcpkg export --triplet=x64-$(buildTarget) --nuget --nuget-version=$(VERSION) --nuget-id=celestia-$(buildTarget)-dependencies libpng libjpeg-turbo gettext luajit fmt angle eigen3 freetype cspice libzip  meshoptimizer miniaudio boost-container boost-smart-ptr sentry-native
+      .\vcpkg export --triplet=x64-$(buildTarget) --nuget --nuget-version=$(VERSION) --nuget-id=celestia-$(buildTarget)-dependencies libpng libjpeg-turbo gettext luajit fmt eigen3 freetype cspice libzip  meshoptimizer miniaudio boost-container boost-smart-ptr sentry-native
     displayName: 'Export (Windows)'
     workingDirectory: $(Agent.BuildDirectory)/vcpkg
     condition: and(eq( variables['buildTarget'], 'windows-release' ), ne( variables['VERSION'], '' ))
