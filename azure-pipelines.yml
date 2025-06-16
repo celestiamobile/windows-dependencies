@@ -13,10 +13,10 @@ stages:
     parameters:
       buildTarget: windows-release
 
-- stage: UWP
-  displayName: 'UWP'
-  dependsOn: []
-  jobs:
-  - template: jobs/build.yml
-    parameters:
-      buildTarget: uwp
+#- stage: UWP
+#  displayName: 'UWP'
+#  dependsOn: []
+#  jobs:
+#  - template: jobs/build.yml
+#    parameters:
+#      buildTarget: uwp
