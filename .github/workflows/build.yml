@@ -1,0 +1,122 @@
+name: Build Windows Dependencies
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  VERSION: ${{ format('1.0.{0}', github.run_number) }}
+
+jobs:
+  build:
+    name: Build ${{ matrix.arch }}
+    runs-on: ${{ matrix.arch == 'arm64' && 'windows-11-arm' || 'windows-2025' }}
+    timeout-minutes: 120
+    strategy:
+      matrix:
+        arch: [x64, arm64]
+      fail-fast: false
+    
+    steps:
+    - name: Checkout vcpkg
+      uses: actions/checkout@v4
+      with:
+        repository: celestiamobile/vcpkg
+        ref: celestia
+        path: vcpkg
+        fetch-depth: 0
+
+    - name: Bootstrap vcpkg
+      run: .\bootstrap-vcpkg.bat
+      working-directory: vcpkg
+
+    - name: Build Dependencies (x64)
+      if: matrix.arch == 'x64'
+      run: |
+        $env:VCPKG_BINARY_SOURCES = 'clear'
+        .\vcpkg --triplet=${{ matrix.arch }}-windows install --recurse --binarysource=clear libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype[core] cspice libzip[core] meshoptimizer miniaudio boost-container boost-smart-ptr sentry-native
+      working-directory: vcpkg
+
+    - name: Build Dependencies (non-x64)
+      if: matrix.arch != 'x64'
+      run: |
+        $env:VCPKG_BINARY_SOURCES = 'clear'
+        .\vcpkg --triplet=${{ matrix.arch }}-windows install --recurse --binarysource=clear libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype[core] cspice libzip[core] meshoptimizer miniaudio boost-container boost-smart-ptr
+      working-directory: vcpkg
+
+    - name: Export Package (x64)
+      if: matrix.arch == 'x64'
+      run: |
+        .\vcpkg export --triplet=${{ matrix.arch }}-windows --nuget --nuget-version=${{ env.VERSION }} --nuget-id=celestia-windows-${{ matrix.arch }}-dependencies libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype cspice libzip meshoptimizer miniaudio boost-container boost-smart-ptr sentry-native
+      working-directory: vcpkg
+
+    - name: Export Package (non-x64)
+      if: matrix.arch != 'x64'
+      run: |
+        .\vcpkg export --triplet=${{ matrix.arch }}-windows --nuget --nuget-version=${{ env.VERSION }} --nuget-id=celestia-windows-${{ matrix.arch }}-dependencies libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype cspice libzip meshoptimizer miniaudio boost-container boost-smart-ptr
+      working-directory: vcpkg
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-${{ matrix.arch }}
+        path: vcpkg/celestia-windows-${{ matrix.arch }}-dependencies.${{ env.VERSION }}.nupkg
+        retention-days: 1
+
+  create-release:
+    name: Create Release
+    if: github.event_name == 'workflow_dispatch'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Download x64 Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: windows-x64
+        path: ./artifacts/
+
+    - name: Download ARM64 Artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: windows-arm64
+        path: ./artifacts/
+
+    - name: Create Release
+      uses: actions/create-release@v1
+      id: create_release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ env.VERSION }}
+        release_name: Windows Dependencies v${{ env.VERSION }}
+        body: |
+          Windows Dependencies packages for Celestia
+          
+          This release contains NuGet packages for both x64 and ARM64 architectures:
+          - `celestia-windows-x64-dependencies.${{ env.VERSION }}.nupkg`
+          - `celestia-windows-arm64-dependencies.${{ env.VERSION }}.nupkg`
+        draft: false
+        prerelease: false
+
+    - name: Upload x64 Package to Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./artifacts/celestia-windows-x64-dependencies.${{ env.VERSION }}.nupkg
+        asset_name: celestia-windows-x64-dependencies.${{ env.VERSION }}.nupkg
+        asset_content_type: application/zip
+
+    - name: Upload ARM64 Package to Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./artifacts/celestia-windows-arm64-dependencies.${{ env.VERSION }}.nupkg
+        asset_name: celestia-windows-arm64-dependencies.${{ env.VERSION }}.nupkg
+        asset_content_type: application/zip
