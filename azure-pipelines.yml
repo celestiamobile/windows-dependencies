@@ -6,17 +6,17 @@ resources:
     name: celestiamobile/vcpkg
 
 stages:
-- stage: Windows
-  displayName: 'Windows'
+- stage: x64
+  displayName: 'x64'
   jobs:
   - template: jobs/build.yml
     parameters:
-      buildTarget: windows-release
+      arch: x64
 
-#- stage: UWP
-#  displayName: 'UWP'
-#  dependsOn: []
-#  jobs:
-#  - template: jobs/build.yml
-#    parameters:
-#      buildTarget: uwp
+- stage: arm64
+  displayName: 'arm64'
+  dependsOn: []
+  jobs:
+  - template: jobs/build.yml
+    parameters:
+      arch: arm64
