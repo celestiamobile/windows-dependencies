@@ -6,9 +6,20 @@ on:
   pull_request:
     branches: [ main ]
   workflow_dispatch:
+    inputs:
+      release_version:
+        description: 'Release version (e.g., 1.0). If provided, will create a GitHub release'
+        required: false
+        default: ''
+        type: string
+      prerelease:
+        description: 'Mark release as prerelease'
+        required: false
+        default: false
+        type: boolean
 
 env:
-  VERSION: ${{ format('1.0.{0}', github.run_number) }}
+  VERSION: ${{ inputs.release_version && format('{0}.{1}', inputs.release_version, github.run_number) || '' }}
 
 jobs:
   build:
@@ -68,7 +79,7 @@ jobs:
 
   create-release:
     name: Create Release
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' && inputs.release_version != ''
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -99,7 +110,7 @@ jobs:
           - `celestia-windows-x64-dependencies.${{ env.VERSION }}.nupkg`
           - `celestia-windows-arm64-dependencies.${{ env.VERSION }}.nupkg`
         draft: false
-        prerelease: false
+        prerelease: ${{ inputs.prerelease }}
 
     - name: Upload x64 Package to Release
       uses: actions/upload-release-asset@v1
