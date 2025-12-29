@@ -48,26 +48,26 @@ jobs:
       if: matrix.arch == 'x64'
       run: |
         $env:VCPKG_BINARY_SOURCES = 'clear'
-        .\vcpkg --triplet=${{ matrix.arch }}-windows install --recurse --binarysource=clear libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype[core] cspice libzip[core] meshoptimizer miniaudio boost-container boost-smart-ptr sentry-native
+        .\vcpkg --triplet=${{ matrix.arch }}-windows install --recurse --binarysource=clear libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype[core] cspice libzip[core] meshoptimizer miniaudio boost-container boost-container-hash boost-describe boost-smart-ptr sentry-native
       working-directory: vcpkg
 
     - name: Build Dependencies (non-x64)
       if: matrix.arch != 'x64'
       run: |
         $env:VCPKG_BINARY_SOURCES = 'clear'
-        .\vcpkg --triplet=${{ matrix.arch }}-windows install --recurse --binarysource=clear libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype[core] cspice libzip[core] meshoptimizer miniaudio boost-container boost-smart-ptr
+        .\vcpkg --triplet=${{ matrix.arch }}-windows install --recurse --binarysource=clear libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype[core] cspice libzip[core] meshoptimizer miniaudio boost-container boost-container-hash boost-describe boost-smart-ptr
       working-directory: vcpkg
 
     - name: Export Package (x64)
       if: matrix.arch == 'x64'
       run: |
-        .\vcpkg export --triplet=${{ matrix.arch }}-windows --nuget --nuget-version=${{ env.VERSION }} --nuget-id=celestia-windows-${{ matrix.arch }}-dependencies libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype cspice libzip meshoptimizer miniaudio boost-container boost-smart-ptr sentry-native
+        .\vcpkg export --triplet=${{ matrix.arch }}-windows --nuget --nuget-version=${{ env.VERSION }} --nuget-id=celestia-windows-${{ matrix.arch }}-dependencies libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype cspice libzip meshoptimizer miniaudio boost-container boost-container-hash boost-describe boost-smart-ptr sentry-native
       working-directory: vcpkg
 
     - name: Export Package (non-x64)
       if: matrix.arch != 'x64'
       run: |
-        .\vcpkg export --triplet=${{ matrix.arch }}-windows --nuget --nuget-version=${{ env.VERSION }} --nuget-id=celestia-windows-${{ matrix.arch }}-dependencies libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype cspice libzip meshoptimizer miniaudio boost-container boost-smart-ptr
+        .\vcpkg export --triplet=${{ matrix.arch }}-windows --nuget --nuget-version=${{ env.VERSION }} --nuget-id=celestia-windows-${{ matrix.arch }}-dependencies libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype cspice libzip meshoptimizer miniaudio boost-container boost-container-hash boost-describe boost-smart-ptr
       working-directory: vcpkg
 
     - name: Upload Artifacts
