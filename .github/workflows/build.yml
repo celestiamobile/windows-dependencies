@@ -24,7 +24,7 @@ env:
 jobs:
   build:
     name: Build ${{ matrix.arch }}
-    runs-on: ${{ matrix.arch == 'arm64' && 'windows-11-arm' || 'windows-2025' }}
+    runs-on: ${{ matrix.arch == 'arm64' && 'windows-11-arm' || 'windows-2025-vs2026' }}
     timeout-minutes: 120
     strategy:
       matrix:
