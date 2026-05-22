@@ -61,13 +61,13 @@ jobs:
     - name: Export Package (x64)
       if: matrix.arch == 'x64' && env.VERSION != ''
       run: |
-        .\vcpkg export --triplet=${{ matrix.arch }}-windows --nuget --nuget-version=${{ env.VERSION }} --nuget-id=celestia-windows-${{ matrix.arch }}-dependencies libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype cspice libzip meshoptimizer miniaudio boost-container boost-container-hash boost-describe boost-smart-ptr fast-float ffmpeg[x264] sentry-native
+        .\vcpkg export --triplet=${{ matrix.arch }}-windows --nuget --nuget-version=${{ env.VERSION }} --nuget-id=celestia-windows-${{ matrix.arch }}-dependencies libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype cspice libzip meshoptimizer miniaudio boost-container boost-container-hash boost-describe boost-smart-ptr fast-float ffmpeg sentry-native
       working-directory: vcpkg
 
     - name: Export Package (non-x64)
       if: matrix.arch != 'x64' && env.VERSION != ''
       run: |
-        .\vcpkg export --triplet=${{ matrix.arch }}-windows --nuget --nuget-version=${{ env.VERSION }} --nuget-id=celestia-windows-${{ matrix.arch }}-dependencies libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype cspice libzip meshoptimizer miniaudio boost-container boost-container-hash boost-describe boost-smart-ptr fast-float ffmpeg[x264]
+        .\vcpkg export --triplet=${{ matrix.arch }}-windows --nuget --nuget-version=${{ env.VERSION }} --nuget-id=celestia-windows-${{ matrix.arch }}-dependencies libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype cspice libzip meshoptimizer miniaudio boost-container boost-container-hash boost-describe boost-smart-ptr fast-float ffmpeg
       working-directory: vcpkg
 
     - name: Upload Artifacts
