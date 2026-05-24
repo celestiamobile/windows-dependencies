@@ -48,14 +48,14 @@ jobs:
       if: matrix.arch == 'x64'
       run: |
         $env:VCPKG_BINARY_SOURCES = 'clear'
-        .\vcpkg --triplet=${{ matrix.arch }}-windows install --recurse --binarysource=clear libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype[core] cspice libzip[core] meshoptimizer miniaudio boost-container boost-container-hash boost-describe boost-smart-ptr fast-float ffmpeg[x264] sentry-native
+        .\vcpkg --triplet=${{ matrix.arch }}-windows install --recurse --binarysource=clear libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype[core] cspice libzip[core] meshoptimizer miniaudio boost-container boost-container-hash boost-describe boost-smart-ptr fast-float ffmpeg[core,avcodec,avformat,gpl,swscale,x264] sentry-native
       working-directory: vcpkg
 
     - name: Build Dependencies (non-x64)
       if: matrix.arch != 'x64'
       run: |
         $env:VCPKG_BINARY_SOURCES = 'clear'
-        .\vcpkg --triplet=${{ matrix.arch }}-windows install --recurse --binarysource=clear libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype[core] cspice libzip[core] meshoptimizer miniaudio boost-container boost-container-hash boost-describe boost-smart-ptr fast-float ffmpeg[x264]
+        .\vcpkg --triplet=${{ matrix.arch }}-windows install --recurse --binarysource=clear libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype[core] cspice libzip[core] meshoptimizer miniaudio boost-container boost-container-hash boost-describe boost-smart-ptr fast-float ffmpeg[core,avcodec,avformat,gpl,swscale,x264]
       working-directory: vcpkg
 
     - name: Export Package (x64)
