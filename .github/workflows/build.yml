@@ -44,30 +44,16 @@ jobs:
       run: .\bootstrap-vcpkg.bat
       working-directory: vcpkg
 
-    - name: Build Dependencies (x64)
-      if: matrix.arch == 'x64'
+    - name: Build Dependencies
       run: |
         $env:VCPKG_BINARY_SOURCES = 'clear'
         .\vcpkg --triplet=${{ matrix.arch }}-windows install --recurse --binarysource=clear libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype[core] cspice libzip[core] meshoptimizer miniaudio boost-container boost-container-hash boost-describe boost-smart-ptr fast-float ffmpeg[core,avcodec,avformat,gpl,swscale,x264] sentry-native
       working-directory: vcpkg
 
-    - name: Build Dependencies (non-x64)
-      if: matrix.arch != 'x64'
-      run: |
-        $env:VCPKG_BINARY_SOURCES = 'clear'
-        .\vcpkg --triplet=${{ matrix.arch }}-windows install --recurse --binarysource=clear libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype[core] cspice libzip[core] meshoptimizer miniaudio boost-container boost-container-hash boost-describe boost-smart-ptr fast-float ffmpeg[core,avcodec,avformat,gpl,swscale,x264]
-      working-directory: vcpkg
-
-    - name: Export Package (x64)
-      if: matrix.arch == 'x64' && env.VERSION != ''
+    - name: Export Package
+      if: env.VERSION != ''
       run: |
         .\vcpkg export --triplet=${{ matrix.arch }}-windows --nuget --nuget-version=${{ env.VERSION }} --nuget-id=celestia-windows-${{ matrix.arch }}-dependencies libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype cspice libzip meshoptimizer miniaudio boost-container boost-container-hash boost-describe boost-smart-ptr fast-float ffmpeg sentry-native
-      working-directory: vcpkg
-
-    - name: Export Package (non-x64)
-      if: matrix.arch != 'x64' && env.VERSION != ''
-      run: |
-        .\vcpkg export --triplet=${{ matrix.arch }}-windows --nuget --nuget-version=${{ env.VERSION }} --nuget-id=celestia-windows-${{ matrix.arch }}-dependencies libepoxy libpng libjpeg-turbo gettext luajit fmt eigen3 freetype cspice libzip meshoptimizer miniaudio boost-container boost-container-hash boost-describe boost-smart-ptr fast-float ffmpeg
       working-directory: vcpkg
 
     - name: Upload Artifacts
